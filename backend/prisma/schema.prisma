@@ -41,6 +41,7 @@ model User {
   // submissions Submission[]
   // submissions Submission[] // same as missions
   // drafts      Draft[] // same as above two
+  missionDrafts MissionDraft[]
 
   @@map("users")
 }
@@ -71,4 +72,18 @@ model Mission {
   @@index([ownerAddress])
   @@index([status, createdAt(sort: Desc)])
   @@map("missions")
+}
+
+model MissionDraft {
+  id           String   @id @default(uuid()) @map("id")
+  ownerAddress String   @map("owner_address")
+  title        String   @map("title")
+  data         Json     @map("data")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  owner User @relation(fields: [ownerAddress], references: [address])
+
+  @@index([ownerAddress, updatedAt])
+  @@map("mission_drafts")
 }
