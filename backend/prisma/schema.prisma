@@ -41,34 +41,4 @@ model User {
   @@map("users")
 }
 
-model Mission {
-  id        String        @id @default(uuid())
-  title     String
-  status    MissionStatus @default(OPEN)
 
-  // Relation to User
-  userId    String
-  user      User          @relation(fields: [userId], references: [id])
-
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-
-  submissions Submission[]
-
-  @@map("missions")
-}
-
-model Submission {
-  id         String           @id @default(uuid())
-  missionId  String
-  userId     String
-
-  status     SubmissionStatus @default(PENDING)
-  createdAt  DateTime         @default(now())
-
-  //Relations to user
-  mission Mission @relation(fields: [missionId], references: [id])
-  user    User    @relation(fields: [userId], references: [id])
-
-  @@map("submissions")
-}
