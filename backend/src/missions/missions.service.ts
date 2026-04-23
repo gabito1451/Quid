@@ -144,6 +144,6 @@ export class MissionsService {
       },
     });
 
-    return submissions as unknown;
+    return submissions;
   }
 }
