@@ -1,5 +1,7 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
+
 import { Prisma } from '@prisma/client';
+
 import { PrismaService } from '../prisma/prisma.service';
 import { MissionsService } from './missions.service';
 import { MissionListSort } from './dto/list-missions-query.dto';
@@ -20,11 +22,13 @@ describe('MissionsService', () => {
   let prisma: {
     mission: { findMany: jest.Mock; findUnique: jest.Mock };
     submission: { findMany: jest.Mock };
+
     missionDraft: {
       findFirst: jest.Mock;
       update: jest.Mock;
       create: jest.Mock;
     };
+
   };
 
   beforeEach(() => {
@@ -36,11 +40,13 @@ describe('MissionsService', () => {
       submission: {
         findMany: jest.fn(),
       },
+
       missionDraft: {
         findFirst: jest.fn(),
         update: jest.fn(),
         create: jest.fn(),
       },
+
     };
 
     service = new MissionsService(prisma as unknown as PrismaService);
@@ -330,4 +336,5 @@ describe('MissionsService', () => {
       expect(result).toEqual(updatedDraft);
     });
   });
+
 });
