@@ -66,4 +66,12 @@ export class MissionsService {
 
     return mission;
   }
+
+  async getMyMissions(ownerAddress: string): Promise<unknown> {
+    return this.prisma.mission.findMany({
+      where: { ownerAddress },
+      orderBy: { createdAt: 'desc' },
+      include: missionListInclude,
+    });
+  }
 }

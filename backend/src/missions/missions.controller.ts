@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
 import { MissionsService } from './missions.service';
 import { ListMissionsQueryDto } from './dto/list-missions-query.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('missions')
 export class MissionsController {
@@ -9,6 +10,12 @@ export class MissionsController {
   @Get()
   list(@Query() query: ListMissionsQueryDto): Promise<unknown> {
     return this.missionsService.listPublicMissions(query);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  me(@Req() req: Request & { user: { address: string } }): Promise<unknown> {
+    return this.missionsService.getMyMissions(req.user.address);
   }
 
   @Get(':id')
