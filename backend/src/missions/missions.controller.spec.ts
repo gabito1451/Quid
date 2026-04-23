@@ -11,19 +11,14 @@ describe('MissionsController', () => {
   let missionsService: {
     listPublicMissions: jest.Mock;
     getMissionSubmissions: jest.Mock;
+    getMission: jest.Mock;
   };
-
-  let missionsService: { listPublicMissions: jest.Mock; getMission: jest.Mock };
-
 
   beforeEach(() => {
     missionsService = {
       listPublicMissions: jest.fn(),
-
       getMissionSubmissions: jest.fn(),
-
       getMission: jest.fn(),
-
     };
 
     controller = new MissionsController(
@@ -44,7 +39,6 @@ describe('MissionsController', () => {
     expect(missionsService.listPublicMissions).toHaveBeenCalledWith(query);
   });
 
-
   it('delegates submissions to the service with the authenticated user address', async () => {
     missionsService.getMissionSubmissions.mockResolvedValue(['sub']);
 
@@ -57,6 +51,7 @@ describe('MissionsController', () => {
       'mission-1',
       '0xabc',
     );
+  });
 
   it('forwards the mission id to the service and returns the result', async () => {
     const mockMission = { id: 'mission-1', title: 'Test' };
@@ -64,6 +59,5 @@ describe('MissionsController', () => {
 
     await expect(controller.detail('mission-1')).resolves.toEqual(mockMission);
     expect(missionsService.getMission).toHaveBeenCalledWith('mission-1');
-
   });
 });
