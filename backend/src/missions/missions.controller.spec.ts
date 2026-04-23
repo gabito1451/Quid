@@ -14,7 +14,10 @@ describe('MissionsController', () => {
     listPublicMissions: jest.Mock;
     getMissionSubmissions: jest.Mock;
     getMission: jest.Mock;
+
     saveDraft: jest.Mock;
+
+
   };
 
   beforeEach(() => {
@@ -57,6 +60,7 @@ describe('MissionsController', () => {
     );
   });
 
+
   it('propagates ForbiddenException when user is not the mission owner', async () => {
     missionsService.getMissionSubmissions.mockRejectedValue(
       new ForbiddenException(),
@@ -80,6 +84,8 @@ describe('MissionsController', () => {
       } as any),
     ).rejects.toThrow(NotFoundException);
   });
+
+
 
   it('forwards the mission id to the service and returns the result', async () => {
     const mockMission = { id: 'mission-1', title: 'Test' };
