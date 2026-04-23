@@ -3,16 +3,21 @@ import { MissionsService } from './missions.service';
 import {
   ListMissionsQueryDto,
   MissionListSort,
-  MissionQueryStatus,
 } from './dto/list-missions-query.dto';
 
 describe('MissionsController', () => {
   let controller: MissionsController;
-  let missionsService: { listPublicMissions: jest.Mock; getMission: jest.Mock };
+
+  let missionsService: {
+    listPublicMissions: jest.Mock;
+    getMissionSubmissions: jest.Mock;
+    getMission: jest.Mock;
+  };
 
   beforeEach(() => {
     missionsService = {
       listPublicMissions: jest.fn(),
+      getMissionSubmissions: jest.fn(),
       getMission: jest.fn(),
     };
 
@@ -23,7 +28,7 @@ describe('MissionsController', () => {
 
   it('forwards the public list query to the service unchanged', async () => {
     const query: ListMissionsQueryDto = {
-      status: MissionQueryStatus.OPEN,
+      status: 'OPEN',
       sort: MissionListSort.NEWEST,
       limit: 12,
     };
@@ -32,6 +37,20 @@ describe('MissionsController', () => {
 
     await expect(controller.list(query)).resolves.toEqual(['mission']);
     expect(missionsService.listPublicMissions).toHaveBeenCalledWith(query);
+  });
+
+  it('delegates submissions to the service with the authenticated user address', async () => {
+    missionsService.getMissionSubmissions.mockResolvedValue(['sub']);
+
+    const result = await controller.submissions('mission-1', {
+      user: { userId: 'user-1', address: '0xabc' },
+    } as any);
+
+    expect(result).toEqual(['sub']);
+    expect(missionsService.getMissionSubmissions).toHaveBeenCalledWith(
+      'mission-1',
+      '0xabc',
+    );
   });
 
   it('forwards the mission id to the service and returns the result', async () => {
