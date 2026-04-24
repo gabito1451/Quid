@@ -3,12 +3,15 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { MissionStatus } from '@prisma/client';
+
+import { MissionStatus, Prisma } from '@prisma/client';
+
 import { PrismaService } from '../prisma/prisma.service';
 import {
   ListMissionsQueryDto,
   MissionListSort,
 } from './dto/list-missions-query.dto';
+import { SaveDraftDto } from './dto/save-draft.dto';
 
 const missionListInclude = {
   owner: {
@@ -79,8 +82,31 @@ export class MissionsService {
     return mission;
   }
 
-  saveDraft(id: string, body: string): { id: string; body: string } {
-    return { id, body };
+  async saveDraft(ownerAddress: string, dto: SaveDraftDto): Promise<unknown> {
+    const latestDraft = await this.prisma.missionDraft.findFirst({
+      where: { ownerAddress },
+      orderBy: { updatedAt: 'desc' },
+    });
+
+    if (latestDraft) {
+      const updated = await this.prisma.missionDraft.update({
+        where: { id: latestDraft.id },
+        data: {
+          title: dto.title,
+          data: dto.data as Prisma.InputJsonValue,
+        },
+      });
+      return updated;
+    }
+
+    const created = await this.prisma.missionDraft.create({
+      data: {
+        ownerAddress,
+        title: dto.title,
+        data: dto.data as Prisma.InputJsonValue,
+      },
+    });
+    return created;
   }
 
   async getMissionSubmissions(
