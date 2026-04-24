@@ -21,7 +21,11 @@ describe('MissionsController', () => {
   beforeEach(() => {
     missionsService = {
       listPublicMissions: jest.fn(),
+
       getMissionSubmissions: jest.fn(),
+
+      getMissionSubmissions: jest.fn(),
+
       getMission: jest.fn(),
       saveDraft: jest.fn(),
     };
